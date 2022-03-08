@@ -1,0 +1,1 @@
+###[Install](https://github.com/MarvNC/jpdb-freq-list/raw/master/jpdb-freq-list.user.js)
