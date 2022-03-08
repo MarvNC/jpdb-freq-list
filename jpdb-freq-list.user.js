@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.03
+// @version     1.04
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -16,7 +16,10 @@ const defaultSort = 'by-frequency-global';
 
 const buttonHTML = `<div class="dropdown" style="margin-bottom: 1rem; display: flex; justify-content: flex-end;"><details><summary style="padding: 0.5rem 1rem;">Export as frequency list</summary></details></div>`;
 
-const jsonIndex = (name, sort) => `{"title":"${name}","format":3,"revision":"${name}:${sort}"}`;
+const jsonIndex = (name, sort) =>
+  `{"title":"${name}","format":3,"revision":"JPDB_${sort}_${new Date()
+    .toISOString()
+    .substring(0, 10)}"}`;
 
 const entriesPerPage = 50;
 
@@ -65,9 +68,8 @@ const entriesPerPage = 50;
       )}.<br>
       ${freqList.length} entries scraped.<br>
        <strong>${formatMs(msRemaining)}</strong> remaining.`;
+       
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
-      console.log(url);
-
       const html = await getUrl(url);
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
