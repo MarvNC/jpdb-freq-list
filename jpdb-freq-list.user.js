@@ -3,15 +3,18 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.04
+// @version     1.05
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
 // @description Exports a JPDB deck to a Yomichan compatible frequency list.
 // ==/UserScript==
 
+let delayMs = 1200;
+
 const buildUrl = (domain, paramSymbol, sort, offset) =>
   `${domain}${paramSymbol}sort_by=${sort}&offset=${offset}`;
+
 const defaultSort = 'by-frequency-global';
 
 const buttonHTML = `<div class="dropdown" style="margin-bottom: 1rem; display: flex; justify-content: flex-end;"><details><summary style="padding: 0.5rem 1rem;">Export as frequency list</summary></details></div>`;
@@ -68,7 +71,7 @@ const entriesPerPage = 50;
       )}.<br>
       ${freqList.length} entries scraped.<br>
        <strong>${formatMs(msRemaining)}</strong> remaining.`;
-       
+
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
       const html = await getUrl(url);
       const parser = new DOMParser();
@@ -111,8 +114,6 @@ const entriesPerPage = 50;
     });
   });
 })();
-
-let delayMs = 1200;
 
 function createElementFromHTML(htmlString) {
   var div = document.createElement('div');
