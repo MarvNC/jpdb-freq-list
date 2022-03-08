@@ -62,6 +62,12 @@ const entriesPerPage = 50;
   button.addEventListener('click', async () => {
     if (exporting) return;
     exporting = true;
+
+    // prevent accidental closing tab
+    window.addEventListener('beforeunload', (e) => {
+      e.returnValue = 'Are you sure you want to stop exporting?';
+    });
+
     for (let i = 0; i < entriesAmount; i += entriesPerPage) {
       let msRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
       buttonText.innerHTML = `${deckName}: ${entriesAmount} entries<br>
