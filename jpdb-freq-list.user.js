@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.05
+// @version     1.06
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -20,9 +20,7 @@ const defaultSort = 'by-frequency-global';
 const buttonHTML = `<div class="dropdown" style="margin-bottom: 1rem; display: flex; justify-content: flex-end;"><details><summary style="padding: 0.5rem 1rem;">Export as frequency list</summary></details></div>`;
 
 const jsonIndex = (name, sort) =>
-  `{"title":"${name}","format":3,"revision":"JPDB_${sort}_${new Date()
-    .toISOString()
-    .substring(0, 10)}"}`;
+  `{"title":"${name}","format":3,"revision":"JPDB_${sort}_${new Date().toISOString()}"}`;
 
 const entriesPerPage = 50;
 
@@ -116,7 +114,7 @@ const entriesPerPage = 50;
     zip.file('index.json', jsonIndex(deckName, sortOrder));
     zip.file('term_meta_bank_1.json', JSON.stringify(freqList));
     zip.generateAsync({ type: 'blob' }).then(function (content) {
-      saveAs(content, deckName + '.zip');
+      saveAs(content, `${deckName}_${new Date().toISOString()}.zip`);
     });
   });
 })();
