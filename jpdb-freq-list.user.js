@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.07
+// @version     1.08
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -173,9 +173,17 @@ const entriesPerPage = 50;
     zip.file('index.json', JSON.stringify(jsonIndex(deckName, sortOrder)));
     zip.file('term_meta_bank_1.json', JSON.stringify(freqList));
 
-    zip.generateAsync({ type: 'blob' }).then(function (content) {
-      saveAs(content, fileName(deckName));
-    });
+    zip
+      .generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: {
+          level: 9,
+        },
+      })
+      .then(function (content) {
+        saveAs(content, fileName(deckName));
+      });
   });
 })();
 
