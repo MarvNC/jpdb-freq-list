@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.06
+// @version     1.07
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -12,15 +12,33 @@
 
 let delayMs = 1200;
 
+const kanaSymbol = '㋕';
+
+const fileName = (deckname) => `[Freq] ${deckname}_${new Date().toISOString()}.zip`;
+
 const buildUrl = (domain, paramSymbol, sort, offset) =>
   `${domain}${paramSymbol}sort_by=${sort}&offset=${offset}`;
 
 const defaultSort = 'by-frequency-global';
 
-const buttonHTML = `<div class="dropdown" style="margin-bottom: 1rem; display: flex; justify-content: flex-end;"><details><summary style="padding: 0.5rem 1rem;">Export as frequency list</summary></details></div>`;
+const buttonHTML = /* html */ `
+<div class="dropdown" style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
+  <details>
+    <summary style="padding: 0.5rem 1rem;">Export as frequency list</summary>
+  </details>
+</div>`;
 
-const jsonIndex = (name, sort) =>
-  `{"title":"${name}","format":3,"revision":"JPDB_${sort}_${new Date().toISOString()}"}`;
+// https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-index-schema.json
+const jsonIndex = (name, sort) => {
+  return {
+    title: name,
+    format: 3,
+    revision: `JPDB_${sort}_${new Date().toISOString()}`,
+    author: 'jpdb, Marv',
+    url: 'https://jpdb.io',
+    description: 'Generated via userscript: https://github.com/MarvNC/jpdb-freq-list',
+  };
+};
 
 const entriesPerPage = 50;
 
@@ -55,7 +73,7 @@ const entriesPerPage = 50;
   entriesAmountTextElem.parentNode.insertBefore(button, entriesAmountTextElem);
 
   let exporting = false;
-  const freqList = [];
+  const termEntries = {};
   let currentFreq = 1;
   button.addEventListener('click', async () => {
     if (exporting) return;
@@ -73,7 +91,7 @@ const entriesPerPage = 50;
       Scraping page ${Math.floor(i / entriesPerPage) + 1} of ${Math.ceil(
         entriesAmount / entriesPerPage
       )}.<br>
-      ${freqList.length} entries scraped.<br>
+      ${currentFreq} entries scraped.<br>
        <strong>${formatMs(msRemaining)}</strong> remaining.`;
 
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
@@ -84,7 +102,9 @@ const entriesPerPage = 50;
 
       for (const entry of entries) {
         const kanji = decodeURIComponent(entry.href).split('/')[5].replace('#a', '');
-        let furi = [...entry.querySelectorAll('ruby')]
+        const entryID = entry.href.split('/')[4];
+        const isKana = !entry.querySelector('rt');
+        const furi = [...entry.querySelectorAll('ruby')]
           .map((ruby) => {
             if (ruby.childElementCount > 0) {
               return ruby.firstElementChild.innerText;
@@ -94,15 +114,52 @@ const entriesPerPage = 50;
           })
           .join('');
 
-        freqList.push([
-          kanji,
-          'freq',
-          {
-            reading: furi,
-            frequency: currentFreq,
-          },
-        ]);
+        const termData = [kanji, furi, currentFreq];
+
+        if (!termEntries[entryID]) {
+          termEntries[entryID] = {};
+        }
+        if (isKana) {
+          termEntries[entryID].kana = termData;
+        } else {
+          if (!termEntries[entryID].kanji) {
+            termEntries[entryID].kanji = [];
+          }
+          termEntries[entryID].kanji.push(termData);
+        }
+
         currentFreq++;
+      }
+    }
+
+    buttonText.innerHTML = `Finished scraping ${currentFreq} entries, generating zip file.`;
+
+    const freqList = [];
+
+    // convert termEntries into array to export
+    // https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-term-meta-bank-v3-schema.json
+    const termEntryData = (kanji, reading, freqValue, isKana = false) => [
+      kanji,
+      'freq',
+      {
+        reading: reading,
+        frequency: {
+          value: freqValue,
+          displayValue: freqValue + (isKana ? kanaSymbol : ''),
+        },
+      },
+    ];
+
+    for (const entryID in termEntries) {
+      const entry = termEntries[entryID];
+      for (const kanji of entry.kanji) {
+        freqList.push(termEntryData(kanji[0], kanji[1], kanji[2]));
+        if (entry.kana) {
+          freqList.push(termEntryData(kanji[0], kanji[1], entry.kana[2], true));
+        }
+      }
+      if (entry.kana) {
+        freqList.push(termEntryData(entry.kana[0], entry.kana[1], entry.kana[2]));
       }
     }
 
@@ -110,11 +167,14 @@ const entriesPerPage = 50;
     Sorted by ${sortOrder}`;
 
     console.log(`Scraped ${freqList.length} entries`);
+
     const zip = new JSZip();
-    zip.file('index.json', jsonIndex(deckName, sortOrder));
+
+    zip.file('index.json', JSON.stringify(jsonIndex(deckName, sortOrder)));
     zip.file('term_meta_bank_1.json', JSON.stringify(freqList));
+
     zip.generateAsync({ type: 'blob' }).then(function (content) {
-      saveAs(content, `${deckName}_${new Date().toISOString()}.zip`);
+      saveAs(content, fileName(deckName));
     });
   });
 })();
