@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.09
+// @version     1.10
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -160,7 +160,7 @@ const entriesPerPage = 50;
         }
       }
       if (entry.kana) {
-        freqList.push(termEntryData(entry.kana[0], entry.kana[1], entry.kana[2]));
+        freqList.push(termEntryData(entry.kana[0], entry.kana[1], entry.kana[2], true));
       }
     }
 
