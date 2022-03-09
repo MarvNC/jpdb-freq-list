@@ -96,9 +96,7 @@ const entriesPerPage = 50;
        <strong>${formatMs(msRemaining)}</strong> remaining.`;
 
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
-      const html = await getUrl(url);
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+      const doc = await getUrl(url);
       const entries = [...doc.querySelectorAll('.vocabulary-list .entry .vocabulary-spelling a')];
 
       for (const entry of entries) {
@@ -206,7 +204,8 @@ async function getUrl(url) {
     console.log('Failed response, new wait:' + waitMs);
     await timer(waitMs);
   }
-  return await response.text();
+  const parser = new DOMParser();
+  return parser.parseFromString(await response.text(), 'text/html');
 }
 
 function timer(ms) {
