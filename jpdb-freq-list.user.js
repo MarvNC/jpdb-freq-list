@@ -13,6 +13,7 @@
 let delayMs = 1200;
 
 const kanaSymbol = '㋕';
+const notUsedSymbol = 'X';
 
 const fileName = (deckname) => `[Freq] ${deckname}_${new Date().toISOString()}.zip`;
 
@@ -37,7 +38,9 @@ const jsonIndex = (name, sort) => {
     frequencyMode: 'rank-based',
     author: 'jpdb, Marv',
     url: 'https://jpdb.io',
-    description: 'Generated via userscript: https://github.com/MarvNC/jpdb-freq-list',
+    description: `Generated via userscript: https://github.com/MarvNC/jpdb-freq-list
+    ${kanaSymbol} is used to indicate a frequency for a hiragana reading.
+    ${notUsedSymbol} is used to indicate that a term does not appear in the JPDB corpus.`,
   };
 };
 
@@ -74,8 +77,7 @@ const entriesPerPage = 50;
   entriesAmountTextElem.parentNode.insertBefore(button, entriesAmountTextElem);
 
   let exporting = false;
-  const termEntries = {};
-  let currentFreq = 1;
+
   button.addEventListener('click', async () => {
     if (exporting) return;
     exporting = true;
@@ -85,6 +87,8 @@ const entriesPerPage = 50;
       e.returnValue = 'Are you sure you want to stop exporting?';
     });
 
+    const termEntries = {};
+    let currentFreq = 1;
     for (let i = 0; i < entriesAmount; i += entriesPerPage) {
       let msRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
       buttonText.innerHTML = `${deckName}: ${entriesAmount} entries<br>
