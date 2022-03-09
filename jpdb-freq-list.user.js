@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.08
+// @version     1.09
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -34,6 +34,7 @@ const jsonIndex = (name, sort) => {
     title: name,
     format: 3,
     revision: `JPDB_${sort}_${new Date().toISOString()}`,
+    frequencyMode: 'rank-based',
     author: 'jpdb, Marv',
     url: 'https://jpdb.io',
     description: 'Generated via userscript: https://github.com/MarvNC/jpdb-freq-list',
