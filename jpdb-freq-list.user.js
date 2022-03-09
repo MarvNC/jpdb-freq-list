@@ -92,7 +92,7 @@ const entriesPerPage = 50;
       Scraping page ${Math.floor(i / entriesPerPage) + 1} of ${Math.ceil(
         entriesAmount / entriesPerPage
       )}.<br>
-      ${currentFreq} entries scraped.<br>
+      ${currentFreq - 1} entries scraped.<br>
        <strong>${formatMs(msRemaining)}</strong> remaining.`;
 
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
@@ -133,7 +133,7 @@ const entriesPerPage = 50;
       }
     }
 
-    buttonText.innerHTML = `Finished scraping ${currentFreq} entries, generating zip file.`;
+    buttonText.innerHTML = `Finished scraping ${currentFreq - 1} entries, generating zip file.`;
 
     const freqList = [];
 
