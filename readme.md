@@ -1,10 +1,10 @@
-### [Install](https://github.com/MarvNC/jpdb-freq-list/raw/master/jpdb-freq-list.user.js)
-
 # JPDB Frequency List
 
 A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no deck available for the entire corpus. However it covers about 95% of the entries on JPDB and has over 34万 entries.
 
 # JPDB Deck to Yomichan Frequency List Userscript
+
+### [Install](https://github.com/MarvNC/jpdb-freq-list/raw/master/jpdb-freq-list.user.js)
 
 This userscript generates frequency lists compatible with [Yomichan](https://foosoft.net/projects/yomichan/) using [jpdb](https://jpdb.io).
 
