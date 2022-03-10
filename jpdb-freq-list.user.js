@@ -2,8 +2,8 @@
 // @name        JPDB Deck to frequency
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
-// @match       https://jpdb.io/*/vocabulary-list
-// @version     1.12
+// @match       https://jpdb.io/*/vocabulary-list*
+// @version     1.13
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -100,7 +100,7 @@ const entriesPerPage = 50;
 
     buttonText.innerHTML = `Checking for unused entries.`;
     let firstUnused = 0;
-    if (!(await isUnused(entriesAmount))) {
+    if (document.URL.match('vocabulary-list') || !(await isUnused(entriesAmount))) {
       console.log('No unused entries.');
       firstUnused = entriesAmount;
     } else {
