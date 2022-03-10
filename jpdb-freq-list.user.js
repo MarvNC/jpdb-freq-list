@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list
-// @version     1.11
+// @version     1.12
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -194,10 +194,12 @@ const entriesPerPage = 50;
 
     for (const entryID in termEntries) {
       const entry = termEntries[entryID];
-      for (const kanji of entry.kanji) {
-        freqList.push(termEntryData(kanji[0], kanji[1], kanji[2]));
-        if (entry.kana) {
-          freqList.push(termEntryData(kanji[0], kanji[1], entry.kana[2], true));
+      if (entry.kanji) {
+        for (const kanji of entry.kanji) {
+          freqList.push(termEntryData(kanji[0], kanji[1], kanji[2]));
+          if (entry.kana) {
+            freqList.push(termEntryData(kanji[0], kanji[1], entry.kana[2], true));
+          }
         }
       }
       if (entry.kana) {
