@@ -13,7 +13,7 @@
 let delayMs = 1200;
 
 const kanaSymbol = '㋕';
-const notUsedSymbol = 'X';
+const unusedSymbol = '❌';
 
 const fileName = (deckname) => `[Freq] ${deckname}_${new Date().toISOString()}.zip`;
 
@@ -40,7 +40,7 @@ const jsonIndex = (name, sort) => {
     url: 'https://jpdb.io',
     description: `Generated via userscript: https://github.com/MarvNC/jpdb-freq-list
     ${kanaSymbol} is used to indicate a frequency for a hiragana reading.
-    ${notUsedSymbol} is used to indicate that a term does not appear in the JPDB corpus.`,
+    ${unusedSymbol} is used to indicate that a term does not appear in the JPDB corpus.`,
   };
 };
 
@@ -87,11 +87,46 @@ const entriesPerPage = 50;
       e.returnValue = 'Are you sure you want to stop exporting?';
     });
 
+    // check if unused, get first unused
+    const isUnused = async (entryNumber) => {
+      let doc = await getUrl(buildUrl(domain, paramSymbol, sortOrder, entryNumber - 1));
+      const entryUrl = doc.querySelector('.entry .vocabulary-spelling a')?.href;
+      const usedInUrl = decodeURIComponent(entryUrl).replace('#a', '/used-in');
+      doc = await getUrl(usedInUrl);
+      return [...doc.querySelectorAll('p')].some((elem) =>
+        elem.innerText.includes('No matching entries were found.')
+      );
+    };
+
+    buttonText.innerHTML = `Checking for unused entries.`;
+    let firstUnused = 0;
+    if (!(await isUnused(entriesAmount))) {
+      console.log('No unused entries.');
+      firstUnused = entriesAmount;
+    } else {
+      let top = entriesAmount;
+      while (top - firstUnused > 1) {
+        const mid = Math.floor((top + firstUnused) / 2);
+        buttonText.innerHTML = `Checking for unused: ${mid}`;
+        console.log(mid);
+        if (await isUnused(mid)) {
+          top = mid;
+          console.log('unused');
+        } else {
+          console.log('used');
+          firstUnused = mid;
+        }
+      }
+    }
+    firstUnused++;
+
+    // get terms
     const termEntries = {};
     let currentFreq = 1;
     for (let i = 0; i < entriesAmount; i += entriesPerPage) {
       let msRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
       buttonText.innerHTML = `${deckName}: ${entriesAmount} entries<br>
+      First unused: ${firstUnused}<br>
       Sort: ${sortOrder}<br>
       Scraping page ${Math.floor(i / entriesPerPage) + 1} of ${Math.ceil(
         entriesAmount / entriesPerPage
@@ -141,17 +176,21 @@ const entriesPerPage = 50;
 
     // convert termEntries into array to export
     // https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-term-meta-bank-v3-schema.json
-    const termEntryData = (kanji, reading, freqValue, isKana = false) => [
-      kanji,
-      'freq',
-      {
-        reading: reading,
-        frequency: {
-          value: freqValue,
-          displayValue: freqValue + (isKana ? kanaSymbol : ''),
+    const termEntryData = (kanji, reading, freqValue, isKana = false) => {
+      let unused = freqValue >= firstUnused;
+      freqValue = Math.min(freqValue, firstUnused);
+      return [
+        kanji,
+        'freq',
+        {
+          reading: reading,
+          frequency: {
+            value: freqValue,
+            displayValue: freqValue + (isKana ? kanaSymbol : '') + (unused ? unusedSymbol : ''),
+          },
         },
-      },
-    ];
+      ];
+    };
 
     for (const entryID in termEntries) {
       const entry = termEntries[entryID];
