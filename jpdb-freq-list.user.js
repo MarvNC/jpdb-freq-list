@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.14
+// @version     1.15
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -14,6 +14,9 @@ let delayMs = 1200;
 
 const kanaSymbol = '㋕';
 const unusedSymbol = '❌';
+const hiraganaRegex = /^[\u3040-\u309F]+$/;
+
+const isHiragana = (str) => hiraganaRegex.test(str);
 
 const fileName = (deckname) => `[Freq] ${deckname}_${new Date().toISOString()}.zip`;
 
@@ -141,7 +144,7 @@ const entriesPerPage = 50;
       for (const entry of entries) {
         const kanji = decodeURIComponent(entry.href).split('/')[5].replace('#a', '');
         const entryID = entry.href.split('/')[4];
-        const isKana = !entry.querySelector('rt');
+        const isKana = !entry.querySelector('rt') ? isHiragana(kanji) : false;
         const furi = [...entry.querySelectorAll('ruby')]
           .map((ruby) => {
             if (ruby.childElementCount > 0) {
