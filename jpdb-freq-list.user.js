@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.15
+// @version     1.16
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -103,6 +103,7 @@ const entriesPerPage = 50;
 
     buttonText.innerHTML = `Checking for unused entries.`;
     let firstUnused = 0;
+    // premade vocab decks can't have unused entries
     if (document.URL.match('vocabulary-list') || !(await isUnused(entriesAmount))) {
       console.log('No unused entries.');
       firstUnused = entriesAmount;
@@ -155,19 +156,16 @@ const entriesPerPage = 50;
           })
           .join('');
 
-        const termData = [kanji, furi, currentFreq];
+        const termData = {
+          reading: furi,
+          freq: currentFreq,
+          isKana: isKana,
+        };
 
         if (!termEntries[entryID]) {
           termEntries[entryID] = {};
         }
-        if (isKana) {
-          termEntries[entryID].kana = termData;
-        } else {
-          if (!termEntries[entryID].kanji) {
-            termEntries[entryID].kanji = [];
-          }
-          termEntries[entryID].kanji.push(termData);
-        }
+        termEntries[entryID][kanji] = termData;
 
         currentFreq++;
       }
@@ -197,17 +195,12 @@ const entriesPerPage = 50;
 
     for (const entryID in termEntries) {
       const entry = termEntries[entryID];
-      if (entry.kanji) {
-        for (const kanji of entry.kanji) {
-          freqList.push(termEntryData(kanji[0], kanji[1], kanji[2]));
-          // don't add unused kana only readings
-          if (entry.kana && entry.kana[2] < firstUnused) {
-            freqList.push(termEntryData(kanji[0], kanji[1], entry.kana[2], true));
-          }
+      for (const kanji of Object.keys(entry)) {
+        const termData = entry[kanji];
+        freqList.push(termEntryData(kanji, termData.reading, termData.freq, termData.isKana));
+        if (kanji !== termData.reading && entry[termData.reading]) {
+          freqList.push(termEntryData(kanji, termData.reading, entry[termData.reading].freq, true));
         }
-      }
-      if (entry.kana) {
-        freqList.push(termEntryData(entry.kana[0], entry.kana[1], entry.kana[2], true));
       }
     }
 
