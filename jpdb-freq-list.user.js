@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.16
+// @version     1.17
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -90,47 +90,13 @@ const entriesPerPage = 50;
       e.returnValue = 'Are you sure you want to stop exporting?';
     });
 
-    // check if unused, get first unused
-    const isUnused = async (entryNumber) => {
-      let doc = await getUrl(buildUrl(domain, paramSymbol, sortOrder, entryNumber - 1));
-      const entryUrl = doc.querySelector('.entry .vocabulary-spelling a')?.href;
-      const usedInUrl = decodeURIComponent(entryUrl).replace('#a', '/used-in');
-      doc = await getUrl(usedInUrl);
-      return [...doc.querySelectorAll('p')].some((elem) =>
-        elem.innerText.includes('No matching entries were found.')
-      );
-    };
-
-    buttonText.innerHTML = `Checking for unused entries.`;
-    let firstUnused = 0;
-    // premade vocab decks can't have unused entries
-    if (document.URL.match('vocabulary-list') || !(await isUnused(entriesAmount))) {
-      console.log('No unused entries.');
-      firstUnused = entriesAmount;
-    } else {
-      let top = entriesAmount;
-      while (top - firstUnused > 1) {
-        const mid = Math.floor((top + firstUnused) / 2);
-        buttonText.innerHTML = `Checking for unused: ${mid}`;
-        console.log(mid);
-        if (await isUnused(mid)) {
-          top = mid;
-          console.log('unused');
-        } else {
-          console.log('used');
-          firstUnused = mid;
-        }
-      }
-    }
-    firstUnused++;
-
     // get terms
     const termEntries = {};
+    const usedInURLsList = [];
     let currentFreq = 1;
     for (let i = 0; i < entriesAmount; i += entriesPerPage) {
       let msRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
       buttonText.innerHTML = `${deckName}: ${entriesAmount} entries<br>
-      First unused: ${firstUnused}<br>
       Sort: ${sortOrder}<br>
       Scraping page ${Math.floor(i / entriesPerPage) + 1} of ${Math.ceil(
         entriesAmount / entriesPerPage
@@ -143,6 +109,7 @@ const entriesPerPage = 50;
       const entries = [...doc.querySelectorAll('.vocabulary-list .entry .vocabulary-spelling a')];
 
       for (const entry of entries) {
+        usedInURLsList.push(entry.href.replace('#a', '/used-in'));
         const kanji = decodeURIComponent(entry.href).split('/')[5].replace('#a', '');
         const entryID = entry.href.split('/')[4];
         const isKana = !entry.querySelector('rt') ? isHiragana(kanji) : false;
@@ -171,7 +138,37 @@ const entriesPerPage = 50;
       }
     }
 
-    buttonText.innerHTML = `Finished scraping ${currentFreq - 1} entries, generating zip file.`;
+    // check if unused, get first unused
+    const isUnused = async (entryNumber) => {
+      let doc = await getUrl(usedInURLsList[entryNumber - 1]);
+      return [...doc.querySelectorAll('p')].some((elem) =>
+        elem.innerText.includes('No matching entries were found.')
+      );
+    };
+    buttonText.innerHTML = `Checking for unused entries.`;
+    let firstUnused = 0;
+    // premade vocab decks can't have unused entries
+    if (document.URL.match('vocabulary-list') || !(await isUnused(entriesAmount))) {
+      console.log('No unused entries.');
+      firstUnused = entriesAmount;
+    } else {
+      let top = entriesAmount;
+      while (top - firstUnused > 1) {
+        const mid = Math.floor((top + firstUnused) / 2);
+        buttonText.innerHTML = `Checking for unused: ${mid}`;
+        console.log(mid);
+        if (await isUnused(mid)) {
+          top = mid;
+        } else {
+          firstUnused = mid;
+        }
+      }
+    }
+    firstUnused++;
+    console.log(`First unused: ${firstUnused}`);
+
+    buttonText.innerHTML = `Finished scraping ${currentFreq - 1} entries, generating zip file.<br>
+    First unused entry: ${firstUnused}`;
 
     const freqList = [];
 
@@ -210,8 +207,9 @@ const entriesPerPage = 50;
 
     let exportFileName = fileName(deckName);
 
-    buttonText.innerHTML = `Exporting as ${exportFileName}.zip<br>
-    Sorted by ${sortOrder}`;
+    buttonText.innerHTML = `Exporting as ${exportFileName}<br>
+    Sorted by ${sortOrder}<br>
+    First unused entry: ${firstUnused}`;
 
     console.log(`Scraped ${freqList.length} entries`);
 
