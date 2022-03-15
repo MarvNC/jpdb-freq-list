@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.17
+// @version     1.18
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -195,7 +195,12 @@ const entriesPerPage = 50;
       for (const kanji of Object.keys(entry)) {
         const termData = entry[kanji];
         freqList.push(termEntryData(kanji, termData.reading, termData.freq, termData.isKana));
-        if (kanji !== termData.reading && entry[termData.reading]) {
+        // if the entry isn't kana, and if the reading exists, and it's used
+        if (
+          kanji !== termData.reading &&
+          entry[termData.reading] &&
+          entry[termData.reading].freq < firstUnused
+        ) {
           freqList.push(termEntryData(kanji, termData.reading, entry[termData.reading].freq, true));
         }
       }
