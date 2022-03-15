@@ -208,7 +208,9 @@ const entriesPerPage = 50;
       return a[2].frequency.value - b[2].frequency.value;
     });
 
-    buttonText.innerHTML = `Exporting as ${deckName}.zip<br>
+    let exportFileName = fileName(deckName);
+
+    buttonText.innerHTML = `Exporting as ${exportFileName}.zip<br>
     Sorted by ${sortOrder}`;
 
     console.log(`Scraped ${freqList.length} entries`);
@@ -227,7 +229,7 @@ const entriesPerPage = 50;
         },
       })
       .then(function (content) {
-        saveAs(content, fileName(deckName));
+        saveAs(content, exportFileName);
       });
   });
 })();
