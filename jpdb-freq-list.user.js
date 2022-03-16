@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.18
+// @version     1.19
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -175,19 +175,23 @@ const entriesPerPage = 50;
     // convert termEntries into array to export
     // https://github.com/FooSoft/yomichan/blob/master/ext/data/schemas/dictionary-term-meta-bank-v3-schema.json
     const termEntryData = (kanji, reading, freqValue, isKana = false) => {
-      let unused = freqValue >= firstUnused;
+      const unused = freqValue >= firstUnused;
       freqValue = Math.min(freqValue, firstUnused);
-      return [
-        kanji,
-        'freq',
-        {
+      const frequency = {
+        value: freqValue,
+        displayValue: freqValue + (isKana ? kanaSymbol : '') + (unused ? unusedSymbol : ''),
+      };
+      let thirdValue;
+      // third value is just the freq if it doesn't have the reading, otherwise object with reading and freq.
+      if (kanji == reading) {
+        thirdValue = frequency;
+      } else {
+        thirdValue = {
           reading: reading,
-          frequency: {
-            value: freqValue,
-            displayValue: freqValue + (isKana ? kanaSymbol : '') + (unused ? unusedSymbol : ''),
-          },
-        },
-      ];
+          frequency: frequency,
+        };
+      }
+      return [kanji, 'freq', thirdValue];
     };
 
     for (const entryID in termEntries) {
@@ -207,7 +211,7 @@ const entriesPerPage = 50;
     }
 
     freqList.sort((a, b) => {
-      return a[2].frequency.value - b[2].frequency.value;
+      return (a[2].value ?? a[2].frequency?.value) - (b[2].value ?? b[2].frequency?.value);
     });
 
     let exportFileName = fileName(deckName);
