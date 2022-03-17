@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.21
+// @version     1.22
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -94,17 +94,26 @@ const entriesPerPage = 50;
     const termEntries = {};
     const usedInURLsList = [];
     let currentFreq = 1;
+    const startTime = performance.now();
     for (let i = 0; i < entriesAmount; i += entriesPerPage) {
-      let msRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
+      const assumedMsRemaining = ((entriesAmount - i) / entriesPerPage) * delayMs;
+      const assumedMsElapsed = (i / entriesPerPage) * delayMs;
+      const actualMsElapsed = performance.now() - startTime;
+      let actualToPredictedRatio = actualMsElapsed / assumedMsElapsed;
+      actualToPredictedRatio = actualToPredictedRatio ? actualToPredictedRatio : 1;
+      const predictedMsRemaining = actualToPredictedRatio * assumedMsRemaining;
+
       buttonText.innerHTML = `${deckName}: ${entriesAmount} entries<br>
       Sort: ${sortOrder}<br>
       Scraping page ${Math.floor(i / entriesPerPage) + 1} of ${Math.ceil(
         entriesAmount / entriesPerPage
       )}.<br>
       ${currentFreq - 1} entries scraped.<br>
-       <strong>${formatMs(msRemaining)}</strong> remaining.<br>
+       <strong>${formatMs(predictedMsRemaining)}</strong> remaining.<br>
        Estimated to complete at<br>
-       <strong>${new Date(Date.now() + msRemaining).toTimeString().substring(0, 8)}</strong>`;
+       <strong>
+        ${new Date(Date.now() + predictedMsRemaining).toTimeString().substring(0, 8)}
+       </strong>`;
 
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
       const doc = await getUrl(url);
@@ -142,7 +151,7 @@ const entriesPerPage = 50;
 
     // check if unused, get first unused
     const isUnused = async (entryNumber) => {
-      let doc = await getUrl(usedInURLsList[entryNumber - 1]);
+      const doc = await getUrl(usedInURLsList[entryNumber - 1]);
       return [...doc.querySelectorAll('p')].some((elem) =>
         elem.innerText.includes('No matching entries were found.')
       );
@@ -227,7 +236,7 @@ const entriesPerPage = 50;
       return (a[2].value ?? a[2].frequency?.value) - (b[2].value ?? b[2].frequency?.value);
     });
 
-    let exportFileName = fileName(deckName);
+    const exportFileName = fileName(deckName);
 
     buttonText.innerHTML = `Exporting as ${exportFileName}<br>
     Total entries: ${freqList.length}<br>
