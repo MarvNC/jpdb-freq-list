@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.19
+// @version     1.20
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -207,6 +207,17 @@ const entriesPerPage = 50;
         ) {
           freqList.push(termEntryData(kanji, termData.reading, entry[termData.reading].freq, true));
         }
+        // for katakana versions
+        else if (!termData.isKana && kanji === termData.reading) {
+          const convertedHiragana = katakanaToHiragana(kanji);
+          if (
+            convertedHiragana !== kanji &&
+            entry[convertedHiragana] &&
+            entry[convertedHiragana].freq < firstUnused
+          ) {
+            freqList.push(termEntryData(kanji, kanji, entry[convertedHiragana].freq, true));
+          }
+        }
       }
     }
 
@@ -241,6 +252,13 @@ const entriesPerPage = 50;
       });
   });
 })();
+
+function katakanaToHiragana(str) {
+  return str.replace(/[\u30A1-\u30F6]/g, function (match) {
+    var chr = match.charCodeAt(0) - 0x60;
+    return String.fromCharCode(chr);
+  });
+}
 
 function createElementFromHTML(htmlString) {
   var div = document.createElement('div');
