@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.20
+// @version     1.21
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -102,7 +102,9 @@ const entriesPerPage = 50;
         entriesAmount / entriesPerPage
       )}.<br>
       ${currentFreq - 1} entries scraped.<br>
-       <strong>${formatMs(msRemaining)}</strong> remaining.`;
+       <strong>${formatMs(msRemaining)}</strong> remaining.<br>
+       Estimated to complete at<br>
+       <strong>${new Date(Date.now() + msRemaining).toTimeString().substring(0, 8)}</strong>`;
 
       const url = buildUrl(domain, paramSymbol, sortOrder, i);
       const doc = await getUrl(url);
