@@ -1,6 +1,6 @@
 # JPDB Frequency List
 
-A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no deck available for the entire corpus and it does not include names. However it covers about 95% of the top 20,000 entries on JPDB and has over 34万 entries.
+A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no deck available for the entire corpus and it does not include names. However it covers about 90% of the top 20,000 entries on JPDB and has over 34万 entries.
 
 # JPDB Deck to Yomichan Frequency List Userscript
 
