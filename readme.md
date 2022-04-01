@@ -8,7 +8,7 @@ A frequency list generated using most of the jpdb corpus can be found in the [re
 
 This userscript generates frequency lists compatible with [Yomichan](https://foosoft.net/projects/yomichan/) using [jpdb](https://jpdb.io).
 
-It is developed and tested on [Violentmonkey](https://violentmonkey.github.io/), which is the recommended way to run the script. There are unknown issues running the script with Tampermonkey in some situations.
+It is developed and tested on [Violentmonkey](https://violentmonkey.github.io/), which is the recommended way to run the script.
 
 ## Usage
 
