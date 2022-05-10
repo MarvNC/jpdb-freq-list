@@ -1,6 +1,6 @@
 # JPDB Frequency List
 
-A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no deck available for the entire corpus and it does not include names. However it covers about 90% of the top 20,000 entries on JPDB and has over 34万 entries.
+A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no deck available for the entire corpus and it does not include names. However it covers about 96% of the top 20,000 entries on JPDB and has over 47万 entries.
 
 # JPDB Deck to Yomichan Frequency List Userscript
 
@@ -14,7 +14,7 @@ It is developed and tested on [Violentmonkey](https://violentmonkey.github.io/),
 
 ![example image](./images/chrome_Deck_contents_–_jpdb_-_httpsjpdb.io_-_Google_C_2022-03-09_16-24-16.png)
 
-Simply navigate to a jpdb deck's vocabulary page, and click on the button that says "Export as frequency list." The script will use the current frequency sort setting applied to the deck page.
+Simply navigate to a jpdb deck's vocabulary page, and click on the button that says "Export as frequency list." The script will use the current frequency sort setting applied to the deck page, with the default sort setting being the frequency across the whole corpus.
 
 ## Result
 
