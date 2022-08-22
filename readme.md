@@ -1,6 +1,8 @@
 # JPDB Frequency List
 
-A frequency list generated using most of the jpdb corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no default deck available for the entire corpus. However it covers about 96% of the top 20,000 entries on JPDB and has over 47万 entries.
+**[Download](https://github.com/MarvNC/jpdb-freq-list/releases)**
+
+A frequency list generated using most of the [jpdb](https://jpdb.io/) corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no default deck available for the entire corpus. However it covers about 96% of the top 20,000 entries on JPDB and has over 47万 entries.
 
 - Frequencies for hiragana versions of kanji dictionary entries will be marked by `㋕`. For example, if you hover 成る, you will see frequencies for both なる and 成る.
 - Frequencies for terms that do not appear at all in jpdb's corpus will be marked with `❌`.
