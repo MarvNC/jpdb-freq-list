@@ -1,6 +1,6 @@
 # JPDB Frequency List
 
-**[Download](https://github.com/MarvNC/jpdb-freq-list/releases)**
+### [Download](https://github.com/MarvNC/jpdb-freq-list/releases)
 
 A frequency list generated using most of the [jpdb](https://jpdb.io/) corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no default deck available for the entire corpus. However it covers about 96% of the top 20,000 entries on JPDB and has over 47万 entries.
 
