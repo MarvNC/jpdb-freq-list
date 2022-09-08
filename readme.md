@@ -1,3 +1,5 @@
+### Check out these other [Yomichan dictionaries](https://github.com/MarvNC/yomichan-dictionaries/)
+
 # JPDB Frequency List
 
 ### [Download](https://github.com/MarvNC/jpdb-freq-list/releases)
