@@ -9,6 +9,12 @@ A frequency list generated using most of the [jpdb](https://jpdb.io/) corpus can
 - Frequencies for hiragana versions of kanji dictionary entries will be marked by `㋕`. For example, if you hover 成る, you will see frequencies for both なる and 成る.
 - Frequencies for terms that do not appear at all in jpdb's corpus will be marked with `❌`.
 
+### Note
+
+Due to the nature of how this list was generated, it can no longer be updated as jpdb now limits the total amount of entries that can be in a single deck.
+
+If you want to merge multiple frequency lists, you could try adding the media decks to your account and then use [this site](https://kampffrosch94.github.io/jpdb-deck-manager/) to merge them, before creating a frequency list.
+
 # JPDB Deck to Yomichan Frequency List Userscript
 
 ### [Install](https://github.com/MarvNC/jpdb-freq-list/raw/master/jpdb-freq-list.user.js)
