@@ -3,7 +3,7 @@
 // @namespace   https://github.com/MarvNC
 // @match       https://jpdb.io/deck*
 // @match       https://jpdb.io/*/vocabulary-list*
-// @version     1.23
+// @version     1.24
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
@@ -50,7 +50,7 @@ const jsonIndex = (name, sort) => {
 const entriesPerPage = 50;
 
 (async function () {
-  const domain = document.URL.match(/.+jpdb.io\/.+(id=\d+|vocabulary-list)/)[0];
+  const domain = document.URL.match(/.+jpdb.io\/.+(id=\d+|vocabulary-list|global)/)[0];
   if (!domain) return;
   let paramSymbol = '&';
   if (domain.includes('vocabulary-list')) {
