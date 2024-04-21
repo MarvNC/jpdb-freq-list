@@ -7,6 +7,7 @@
 // @require     https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js
 // @require     https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
 // @author      Marv
+// @icon        https://avatars.githubusercontent.com/u/17340496
 // @description Exports a JPDB deck to a Yomichan compatible frequency list.
 // ==/UserScript==
 
