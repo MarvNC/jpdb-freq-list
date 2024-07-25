@@ -2,9 +2,13 @@
 
 # JPDB Frequency List
 
+<!-- prettier-ignore -->
+> [!WARNING]
+> Kuuube has released a [more recent and better version of the JPDB frequency list](https://github.com/Kuuuube/yomitan-dictionaries?tab=readme-ov-file#jpdb-v21-frequency) that I recommend using instead.
+
 ### [Download](https://github.com/MarvNC/jpdb-freq-list/releases)
 
-A frequency list generated using most of the [jpdb](https://jpdb.io/) corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no default deck available for the entire corpus. However it covers about 96% of the top 20,000 entries on JPDB and has over 47万 entries.
+A frequency list generated using most of the [jpdb](https://jpdb.io/) corpus can be found in the [releases](https://github.com/MarvNC/jpdb-freq-list/releases). It is not exhaustive, as there is no default deck available for the entire corpus. However it covers about 96% of the top 20,000 entries on JPDB and has over 47 万 entries.
 
 - Frequencies for hiragana versions of kanji dictionary entries will be marked by `㋕`. For example, if you hover 成る, you will see frequencies for both なる and 成る.
 - Frequencies for terms that do not appear at all in jpdb's corpus will be marked with `❌`.
